@@ -17,13 +17,13 @@
     prob_binomial::Float64 = 0.5
     max_worms::Int64 = 1
     tau::Float64 = 0.083
-    latent_period::Float64 = tau*365
+    latent_period::Float64 = tau*365 #number of days
     mu_2line_s::Float64 = 21.6
     mu_line_s::Float64 = 10.8
     #z_star::Float64 = exp(-mu_line_s*tau)/(mu_2line_s/mu_line_s-(mu_2line_s/mu_line_s-1)*exp(-mu_line_s*tau))
     max_trials = 10
     max_age = 100
-    mu_h::Float64 = 0.0137
+    mu_h::Float64 = 0.0137#0.015
 
     oviposition_rate::Float64 = 100*365 #annual 
     shedding_rate::Float64 = 58400
@@ -42,12 +42,25 @@
     beta::Float64 = 1.0 #lambda_line/lambda_ #0.3917 #0.190045 #estimar (do artigo?)
    
     immunity_period::Float64 = immunity_parameter*365
-    mutation_prob::Float64 = 0.04
+    mutation_prob::Float64 = 0.005
 
     a::Float64 = 3.4e-7
     b::Float64 = 1.2239e-2
     #T1::Float64 = 0.0719 #0.0719  #0.0537
     #T2::Float64 = 69.77 #114.12  #235.09       #69.77    #144.53
+
+    treatment::Bool = false
+    rounds::Int64 = 0
+    Interval::Float64 = 0
+    med_efficacy::Float64 = 0.8
+    second_time::Int64 = 20
+    treat_strat::Symbol = :dg
+    eff_type::Int64 = 1
+    ef_max::Float64 = 0.9
+    ef_min::Float64 = 0.6
+
+    total_sim_time::Int64 = (years_sim+Int(ceil(rounds*Interval))+second_time)*365
+
 end
 
 function limit_of_ages() 

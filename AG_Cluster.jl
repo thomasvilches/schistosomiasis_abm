@@ -20,7 +20,7 @@ using DataFrames
 
 const n_parameters = 5
 const n_crom = 500 ###this must be multiple of 4
-const n_generations = 30
+const n_generations = 2
 const F = Array{Float64,1}(undef,n_crom)
 const population = Array{Float64,2}(undef,n_parameters,n_crom)
 const F_aux = Array{Float64,1}(undef,n_crom)
@@ -63,12 +63,7 @@ function fitness_crom(cromoss::Array{Float64,1},prevalence_diag_1::Array{Float64
         method = P.method,
         worms_lim_diag = P.worms_lim_diag
     )
-    #=
-    P.infection_human = cromoss[1]
-    P.infection_snail = cromoss[2]
-    P.beta = cromoss[3]
-    P.immunity_parameter = cromoss[4]
-    P.mu_w = cromoss[5]=#
+   
 
     run(P1,n_sim)
 

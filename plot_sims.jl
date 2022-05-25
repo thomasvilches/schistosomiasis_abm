@@ -291,13 +291,48 @@ age_ = age_[:,1]
 Plots.histogram(age_)
 
 
+using Plots
+using FileIO
+include("prevalence.jl")
+include("function.jl")
+function least_square(estimated_prevalence::Array{Float64,1},prevalence_::Array{Float64,1})
 
+    F = estimated_prevalence-prevalence_
+    F = sum(map(x->x^2,F))
+    F = 1/sqrt(F)
+    return F
+
+end
 
 real_prevalence,estimated_prevalence,n_sim_zero = calc_prevalence_sim(P)
 groups,prevalence = assimetric_prevalence()
+least_square(estimated_prevalence,prevalence[:,P.method])
 groups_label = ["0-1";"2-4";"5-9";"10-14";"15-19";"20-24";"25-29";"30-34";"35-39";"40-44";"45-49";"50-54";"55-59";"60-64";"65+"]
 
 Plots.plot([prevalence[:,P.method] estimated_prevalence],label = ["Campo" "in-silico"],linewidth=4,xlabel = "Idade",ylabel = "Prevalência",ylim=(0,1),color = [:red :blue])
-Plots.xticks!(1:15,groups)|>FileIO.save("prevalence-poster.png")
+Plots.xticks!(1:15,groups)|>FileIO.save("prevalence-set-2-1000.png")
 
 Plots.plot([prevalence[:,P.method] estimated_prevalence real_prevalence],label = ["Campo" "Estimada in-silico" "\"Real\" in-silico"],linewidth=4,xlabel = "Idade",ylabel = "Prevalência",ylim=(0,1),color = [:red :blue :green])
+
+NN = 4
+mr = zeros(Float64,11,NN) ### NN in main.jl
+for i = 1:NN
+    P.file_index = i
+    real_prevalence,estimated_prevalence,n_sim_zero = calc_prevalence_sim(P)
+    mr[:,i] = estimated_prevalence
+end
+
+groups,prevalence = assimetric_prevalence()
+groups_label = ["0-1";"2-4";"5-9";"10-14";"15-19";"20-24";"25-29";"30-34";"35-39";"40-44";"45-49";"50-54";"55-59";"60-64";"65+"]
+
+using FileIO
+using Plots
+c = Array{Symbol,2}(undef,1,NN+1)
+c[1,:]=[:red; repeat([:grey],NN)]
+Plots.plot([prevalence[:,P.method] mr],linewidth=4,xlabel = "Idade",ylabel = "Prevalência",ylim=(0,1),color = c)
+Plots.xticks!(1:15,groups)|>FileIO.save("prevalenceagosto.png")
+
+
+
+
+###############################3trying to build the mean interval

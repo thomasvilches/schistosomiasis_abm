@@ -47,8 +47,14 @@ end
 
 function update_population(h1::Array{Human{Int64},1},P::SCHparameters,t::Int64)
     n_infected::Int64 = 0
+    n_infected_found::Int64 = 0
     for i = 1:P.grid_size_human
         if (h1[i].n_worms_f+h1[i].n_worms_m) > 0
+
+            if min(h1[i].n_worms_f,h1[i].n_worms_m) >= P.worms_lim_diag
+                n_infected_found+=1
+            end
+
             h1[i].health = INF
             n_infected += 1
             h1[i].health_immunity = INF
@@ -75,7 +81,7 @@ function update_population(h1::Array{Human{Int64},1},P::SCHparameters,t::Int64)
         end
 
     end
-    return n_infected
+    return n_infected,n_infected_found
 end
 
 function calc_prevalence_sim(P::SCHparameters)
@@ -156,4 +162,51 @@ function update_cercaria!(P::SCHparameters,cercaria_inc_vec::Array{Int64,1},t::I
     end
 
     return mortes
+end
+
+function apply_tratment(h::Array{Human{Int64},1},P::SCHparameters)
+    
+    if P.treat_strat == :dg
+        for i = 1:length(h)
+
+            x = h[i]
+            if min(x.n_worms_m,x.n_worms_f) >= P.worms_lim_diag
+
+                if x.age >= 2
+
+                    if P.eff_type == 0
+                        eff = (P.ef_max-P.ef_min)*rand()+P.ef_min
+                    else
+                        eff = P.med_efficacy
+                    end
+                    d = Distributions.Binomial(x.n_worms_f,eff)
+                    x.n_worms_f -= rand(d)
+                    d = Distributions.Binomial(x.n_worms_m,eff)
+                    x.n_worms_m -= rand(d)
+                end
+            end
+        end
+    elseif P.treat_strat == :total
+        for i = 1:length(h)
+
+            x = h[i]
+
+            if x.age >= 2
+
+                if P.eff_type == 0
+                    eff = (P.ef_max-P.ef_min)*rand()+P.ef_min
+                else
+                    eff = P.med_efficacy
+                end
+                d = Distributions.Binomial(x.n_worms_f,eff)
+                x.n_worms_f -= rand(d)
+                d = Distributions.Binomial(x.n_worms_m,eff)
+                x.n_worms_m -= rand(d)
+            end
+
+         
+        end
+
+    end
+
 end
