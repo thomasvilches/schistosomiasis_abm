@@ -37,7 +37,7 @@ include("AG_Cluster.jl")
 
 to compile the code. The function `run_ga` receives three arguments:
 
-1. The diagnostic method thatis taken into account when reading the data from `Age.dat`, being 
+1. The diagnostic method that is taken into account when reading the data from `Age.dat`, being 
     1. Kato-Katz (KK).
     1. Helmintex (HTX).
 2. The number of pairs of worms that the diagnostic is supposed to detect the infection.
