@@ -22,7 +22,7 @@ Both the files `AG.jl` and `AG_Cluster.jl` have the same function. The differenc
 > :warning: **We do not recommend these simulations to be done in a local machine. A high capacity computational source is strongly recommended**
 
 
-The reader can use the command line
+&rarr; **Firstly**, make sure that the path inside functions `running_generations` and `run_ga` are pointing to an existing path in your system. The reader can use the command line
 
 ```julia
 include("AG.jl")
