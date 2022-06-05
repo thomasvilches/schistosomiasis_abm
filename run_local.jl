@@ -92,179 +92,94 @@ function run_s(P,n_sim)
 end
 
 
-P = SCHparameters(infection_human = 0.00493120,#6.688e-04,
-        infection_snail = 0.00017434,
-        beta = 0.01065208,
-        immunity_parameter = 7.49600000,
-        mu_w = 0.29320000,
-        grid_size_snail = 500,
-        method=2,
-        worms_lim_diag = 1,
-        file_index = 1
-    )
-
+function run1(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0)
     
-age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data,time_data_found = file_names(P)
-
-#P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-n_sim = 1000
-run_s(P,n_sim)
-
-
-
-P = SCHparameters(infection_human = 2.6542e-03,#6.688e-04,
-        infection_snail = 3.0898e-04,
-        beta = 3.2000e-02,
-        immunity_parameter = 1.1836e+01,
-        mu_w = 6.7130e-01,
-        grid_size_snail = 1000,
-        method=2,
-        worms_lim_diag = 1,
-        file_index = 1
-    )
-
-
-age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
-
-#P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-n_sim = 1000
-run(P,n_sim)
-
-
-
-P = SCHparameters(infection_human = 4.96e-04,#6.688e-04,
-        infection_snail = 9.3862e-04,
-        beta = 1.2000e-01,
-        immunity_parameter = 1.4076e+01,
-        mu_w = 8.955e-01,
-        grid_size_snail = 2000,
-        method=2,
-        worms_lim_diag = 1,
-        file_index = 1
-    )
-
-
-age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
-
-#P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-n_sim = 1000
-run_s(P,n_sim)
-
-
-
-#=---------------------------------------------=#
-
-
-P = SCHparameters(infection_human = 0.00493120,#6.688e-04,
-        infection_snail = 0.00017434,
-        beta = 0.01065208,
-        immunity_parameter = 7.49600000,
-        mu_w = 0.29320000,
-        grid_size_snail = 500,
-        method=2,
-        worms_lim_diag = 1,
-        file_index = 1,
-        rounds = 10,
-        Interval = 1,
-        treatment = true
-    )
-
-    
-age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data,time_data_found = file_names(P)
-
-#P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-n_sim = 1000
-run_s(P,n_sim)
-
-
-
-P = SCHparameters(infection_human = 2.6542e-03,#6.688e-04,
-        infection_snail = 3.0898e-04,
-        beta = 3.2000e-02,
-        immunity_parameter = 1.1836e+01,
-        mu_w = 6.7130e-01,
-        grid_size_snail = 1000,
-        method=2,
-        worms_lim_diag = 1,
-        file_index = 1
-    )
-
-
-age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
-
-#P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-n_sim = 1000
-run(P,n_sim)
-
-
-
-P = SCHparameters(infection_human = 4.96e-04,#6.688e-04,
-        infection_snail = 9.3862e-04,
-        beta = 1.2000e-01,
-        immunity_parameter = 1.4076e+01,
-        mu_w = 8.955e-01,
-        grid_size_snail = 2000,
-        method=2,
-        worms_lim_diag = 1,
-        file_index = 1
-    )
-
-
-age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
-
-#P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-n_sim = 1000
-run_s(P,n_sim)
-
-
-
-
-
-
-
-
-
-
-
-
-real_prevalence,estimated_prevalence,n_sim_zero = calc_prevalence_sim(P)
-
-Plots.plot([real_prevalence estimated_prevalence],label = ["real" "estimated"])
-
-
-cercaria = readdlm(string(folder,cercaria_data))
-cerc = map(x->mean(cercaria[x,:]),1:size(cercaria)[1])
-Plots.plot(cerc)
-
-
-#=
-par = readdlm("Cluster/GA/Old_datas/GA_result_pop_19_2_1000.dat",header=false)
-f = readdlm("Cluster/GA/Old_datas/GA_result_fitness_19_2_1000.dat",header=false)[:,1]
-pos=sortperm(f,rev=true)
-sort(f,rev=true)
-
-NN = 4
-
-for i = 2:2
-    println(i)
-    v = par[:,pos[i]]
-    P = SCHparameters(infection_human = v[1],
-            infection_snail = v[2],
-            beta = v[3],
-            immunity_parameter = v[4],
-            mu_w = v[5],
-            grid_size_snail = 1000,
+    for inter = interv,roun = roundss
+        P = SCHparameters(infection_human = 0.00493120,#6.688e-04,
+            infection_snail = 0.00017434,
+            beta = 0.01065208,
+            immunity_parameter = 7.49600000,
+            mu_w = 0.29320000,
+            grid_size_snail = 500,
             method=2,
-            worms_lim_diag = 1,
-            file_index = i
+            worms_lim_diag = wld,
+            file_index = idx,
+            med_efficacy = eff,
+            rounds = roun,
+            treat_strat = strat,
+            Interval = inter,
+            treatment = treat,
+            eff_type = et
         )
 
-    age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
-    #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-    n_sim = 40
-    run(P,n_sim)
-end
-=#
 
-#@everywhere someething
-results = pmap(x-> main(x,data),1:1000)
+        age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data,time_data_found = file_names(P)
+
+        #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
+        n_sim = 1000
+        run_s(P,n_sim)
+    end
+end
+
+
+
+
+function run2(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0)
+        
+    for inter = interv,roun = roundss
+        P = SCHparameters(infection_human = 2.6542e-03,#6.688e-04,
+        infection_snail = 3.0898e-04,
+        beta = 3.2000e-02,
+        immunity_parameter = 1.1836e+01,
+        mu_w = 6.7130e-01,
+        grid_size_snail = 1000,
+        method=2,
+        worms_lim_diag = wld,
+        file_index = idx,
+        med_efficacy = eff,
+        rounds = roun,
+        treat_strat = strat,
+        Interval = inter,
+        treatment = treat,
+        eff_type = et
+        )
+
+
+        age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
+
+        #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
+        n_sim = 1000
+        run_s(P,n_sim)
+    end
+
+end
+
+
+function run3(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0)
+    for inter = interv,roun = roundss
+
+        P = SCHparameters(infection_human = 4.96e-04,#6.688e-04,
+        infection_snail = 9.3862e-04,
+        beta = 1.2000e-01,
+        immunity_parameter = 1.4076e+01,
+        mu_w = 8.955e-01,
+        grid_size_snail = 2000,
+        method=2,
+        worms_lim_diag = wld,
+        file_index = idx,
+        med_efficacy = eff,
+        rounds = roun,
+        treat_strat = strat,
+        Interval = inter,
+        treatment = treat,
+        eff_type = et
+        )
+
+
+        age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
+
+        #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
+        n_sim = 1000
+        run_s(P,n_sim)
+    end
+end
