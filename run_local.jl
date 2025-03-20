@@ -183,3 +183,8 @@ function run3(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=
         run_s(P,n_sim)
     end
 end
+
+# testing
+
+run3(0)
+run1(0)

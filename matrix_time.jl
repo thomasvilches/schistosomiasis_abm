@@ -7,8 +7,8 @@ addprocs(4)
 @everywhere include("parameters.jl")
 
 method = 2
-snail_pop = 500
-file = 1
+snail_pop = 2000
+file = 0
 n_pop_ga = 500
 n_gen = 20
 n_boots = 150
@@ -281,7 +281,7 @@ for snail_pop in [500;1000;2000]
     end
 end
 
-#= 
+
 
 function assimetric_prevalence()
 
@@ -412,4 +412,4 @@ end
 
 real_prevalence,estimated_prevalence,n_sim_zero = calc_prevalence_sim(P)
 
-estimated_prevalence =#
+estimated_prevalence
