@@ -30,9 +30,9 @@ function file_names(P::SCHparameters)
     folder0 = "/data/thomas/schisto_treat/"
     #folder0 = "."
     if !P.treatment
-        folder = string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)/")#"Cluster/fixed_seed/size_500_method_2/"#
+        folder = P.kill_snail ? string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)_ks$(P.prop_ks)/") : string(folder0,"result_$(P.grid_size_snail)_method_ks$(P.method)/")#"Cluster/fixed_seed/size_500_method_2/"#
     else
-        folder = string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)_$(P.rounds)_$(P.Interval)/")
+        folder = P.kill_snail ? string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)_$(P.rounds)_$(P.Interval)_ks$(P.prop_ks)/") : string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)_$(P.rounds)_$(P.Interval)/")
     end
     
     time_data = "inf_time_series_r_$(P.file_index).dat"
@@ -97,7 +97,7 @@ end
 #=---------------------------------------------=#
 
 
-function run1(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0)
+function run1(idx, wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0; ks::Bool = false, pks::Float64 = 0.0)
     
     for inter = interv,roun = roundss
         P = SCHparameters(infection_human = 0.00493120,#6.688e-04,
@@ -114,14 +114,16 @@ function run1(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=
             treat_strat = strat,
             Interval = inter,
             treatment = treat,
-            eff_type = et
+            eff_type = et,
+            kill_snail = ks,
+            prop_ks = pks
         )
 
 
         age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data,time_data_found = file_names(P)
 
         #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-        n_sim = 1000
+        
         run_s(P,n_sim)
     end
 end
@@ -129,7 +131,7 @@ end
 
 
 
-function run2(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0)
+function run2(idx, wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0; ks::Bool = false, pks::Float64 = 0.0)
         
     for inter = interv,roun = roundss
         P = SCHparameters(infection_human = 2.6542e-03,#6.688e-04,
@@ -146,21 +148,23 @@ function run2(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=
         treat_strat = strat,
         Interval = inter,
         treatment = treat,
-        eff_type = et
+        eff_type = et,
+        kill_snail = ks,
+        prop_ks = pks
         )
 
 
         age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
 
         #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-        n_sim = 1000
+        
         run_s(P,n_sim)
     end
 
 end
 
 
-function run3(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0)
+function run3(idx, wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0; ks::Bool = false, pks::Float64 = 0.0)
     for inter = interv,roun = roundss
 
         P = SCHparameters(infection_human = 4.96e-04,#6.688e-04,
@@ -177,27 +181,29 @@ function run3(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=
         treat_strat = strat,
         Interval = inter,
         treatment = treat,
-        eff_type = et
+        eff_type = et,
+        kill_snail = ks,
+        prop_ks = pks
         )
 
 
         age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
 
         #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-        n_sim = 1000
+        
         run_s(P,n_sim)
     end
 end
 
-#=
+#= 
 run1(0)
 run2(0)
-run3(0)=#
-
+run3(0)
+ =#
 
 
 # This is HTX because the wld is 2
-
+#= 
 run1(2,1,true,[0.0],[1],:dg,0.8,0)
 run2(2,1,true,[0.0],[1],:dg,0.8,0)
 run3(2,1,true,[0.0],[1],:dg,0.8,0)
@@ -214,6 +220,7 @@ run3(2,1,true,[0.5;1;2],[2;4;6;8;10],:dg,0.8,0)
 run1(3,1,true,[0.5;1;2],[2;4;6;8;10],:dg,1.0,1)
 run2(3,1,true,[0.5;1;2],[2;4;6;8;10],:dg,1.0,1)
 run3(3,1,true,[0.5;1;2],[2;4;6;8;10],:dg,1.0,1)
+=#
 
 #=
 
@@ -238,8 +245,8 @@ run3(5,2,true,[0.5;1;2],[2;4;6;8;10],:dg,1.0,1)
 
 
 
-# This is MDA because the wld is 2
-
+# This is MDA
+#= 
 run1(6,2,true,[0.0],[1],:total,0.8,0)
 run2(6,2,true,[0.0],[1],:total,0.8,0)
 run3(6,2,true,[0.0],[1],:total,0.8,0)
@@ -256,3 +263,32 @@ run3(6,2,true,[0.5;1;2],[2;4;6;8;10],:total,0.8,0)
 run1(7,2,true,[0.5;1;2],[2;4;6;8;10],:total,1.0,1)
 run2(7,2,true,[0.5;1;2],[2;4;6;8;10],:total,1.0,1)
 run3(7,2,true,[0.5;1;2],[2;4;6;8;10],:total,1.0,1)
+ =#
+
+
+for kk in 0.1:0.1:0.9
+
+    println(string("kk ", kk))
+
+    run1(8; ks = true, pks = kk)
+    run2(8; ks = true, pks = kk)
+    run3(8; ks = true, pks = kk)
+
+    run1(9,1,true,[0.0],[1],:dg,0.8,0; ks = true, pks = kk)
+    run2(9,1,true,[0.0],[1],:dg,0.8,0; ks = true, pks = kk)
+    run3(9,1,true,[0.0],[1],:dg,0.8,0; ks = true, pks = kk)
+
+    run1(10,1,true,[0.0],[1],:dg,1.0,1; ks = true, pks = kk)
+    run2(10,1,true,[0.0],[1],:dg,1.0,1; ks = true, pks = kk)
+    run3(10,1,true,[0.0],[1],:dg,1.0,1; ks = true, pks = kk)
+
+
+    run1(9,1,true,[0.5;1;2],[2;4;6;8;10],:dg,0.8,0; ks = true, pks = kk)
+    run2(9,1,true,[0.5;1;2],[2;4;6;8;10],:dg,0.8,0; ks = true, pks = kk)
+    run3(9,1,true,[0.5;1;2],[2;4;6;8;10],:dg,0.8,0; ks = true, pks = kk)
+
+    run1(10,1,true,[0.5;1;2],[2;4;6;8;10],:dg,1.0,1; ks = true, pks = kk)
+    run2(10,1,true,[0.5;1;2],[2;4;6;8;10],:dg,1.0,1; ks = true, pks = kk)
+    run3(10,1,true,[0.5;1;2],[2;4;6;8;10],:dg,1.0,1; ks = true, pks = kk)
+end
+

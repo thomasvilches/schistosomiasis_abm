@@ -9,8 +9,7 @@ mutable struct Snail{Int64} ## mutable structs are stored on the heap
     #health_immunity::HEALTH
     #death_age::Int64
     #death_days::Int64
-    #Here I added the strain matrix, a vector for the time the strain showed up, number of strains in the body, and
-    #the efficacy of the vaccine against the strain that was transmitted (necessary for the asymp-symp trial)
+
     Snail{Int64}(P::SCHparameters) = new(0,-1,SUSC)
 
     function Snail(idx,P::SCHparameters)

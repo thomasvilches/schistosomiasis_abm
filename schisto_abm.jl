@@ -47,7 +47,7 @@ function main(sim_index::Int64,P::SCHparameters)
             #=if snails[i].health == INF
                 number_of_inf_snails += 1
             end=#
-            y = Int(floor(Int(snails[i].health)/2))
+            y = Int(floor(abs(Int(snails[i].health))/2))
             number_of_inf_snails += y
         end
 
@@ -75,7 +75,7 @@ function main(sim_index::Int64,P::SCHparameters)
                 else 
                     snails[i].time_latent += 1
                 end
-            else 
+            elseif  snails[i].health != DEAD
                 if rand() <= (1-exp(-P.mu_2line_s/365))
                     snails[i].health = SUSC
                     snails[i].time_latent = 0
@@ -101,80 +101,91 @@ function main(sim_index::Int64,P::SCHparameters)
 
 
     #initiating treatment
-    
 
-    for n = 1:P.rounds
-        apply_tratment(humans,P)
-        
-        tt = 1
-        while tt <= (P.Interval*365)
-
-            number_of_pairs = 0.0
-            number_of_inf_snails = 0.0
-            
-
-            for i=1:P.grid_size_human #calculating the MWB over time
-                number_of_pairs += min(humans[i].n_worms_f,humans[i].n_worms_m)
-            end
-
-            for i=1:P.grid_size_snail
-                #=if snails[i].health == INF
-                    number_of_inf_snails += 1
-                end=#
-                y = Int(floor(Int(snails[i].health)/2))
-                number_of_inf_snails += y
-            end
-
-            r = Poisson(P.oviposition_rate/365*P.development_probability*number_of_pairs)
-            miracidium_reservoir = rand(r)
-            
-            r = Poisson(P.shedding_rate/365*number_of_inf_snails)
-            cercaria_reservoir = rand(r)
-            cercaria_vec[t] = cercaria_reservoir
-            #snail dynamic
-            for i = 1:P.grid_size_snail
-                if snails[i].health == SUSC
-                    lambda_s = 1-exp(-P.infection_snail/365)
-                    if rand() <= 1-(1-lambda_s)^miracidium_reservoir#(1-exp(-P.infection_snail/365*miracidium_reservoir))
-                        snails[i].health = LAT
-                        miracidium_reservoir -= 1
-                    end
-
-                elseif snails[i].health == LAT
-                    if rand() <= (1-exp(-P.mu_line_s/365))
-                        snails[i].health = SUSC
-                        snails[i].time_latent = 0
-                    elseif snails[i].time_latent >= P.latent_period
-                        snails[i].health = INF
-                    else 
-                        snails[i].time_latent += 1
-                    end
-                else 
-                    if rand() <= (1-exp(-P.mu_2line_s/365))
-                        snails[i].health = SUSC
-                        snails[i].time_latent = 0
-                    end
-                end
-            end
-            #human dynamic
-            for i=1:P.grid_size_human ##since there is no contact structure, it doesn't matter the update sequence
-                ##First, let's test if the human will die
-                r = rand(1:P.grid_size_human)
-                if (humans[r].age >= humans[r].death_age && humans[r].age_days >= humans[r].death_days)
-                    #if so, they are replaced by a newborn
-                    human_return(humans[r],P)
-                else
-                    cercaria_reservoir = event_test(humans[r],P,cercaria_reservoir)  
-                end
-            end
-
-            infected_n[t],infected_found[t] = update_population(humans,P,t)
-
-            t += 1
-            tt += 1
+    if P.kill_snail
+        pos = sample(1:P.grid_size_snail, Int(floor(P.grid_size_snail*P.prop_ks)))
+        for i in pos
+            snails[i].health = DEAD
         end
-
     end
+
+    if P.treatment
+
+
+        for n = 1:P.rounds
+            apply_tratment(humans,P)
+            
+            tt = 1
+            while tt <= (P.Interval*365)
+    
+                number_of_pairs = 0.0
+                number_of_inf_snails = 0.0
+                
+    
+                for i=1:P.grid_size_human #calculating the MWB over time
+                    number_of_pairs += min(humans[i].n_worms_f,humans[i].n_worms_m)
+                end
+    
+                for i=1:P.grid_size_snail
+                    #=if snails[i].health == INF
+                        number_of_inf_snails += 1
+                    end=#
+                    y = Int(floor(abs(Int(snails[i].health))/2))
+                    number_of_inf_snails += y
+                end
+    
+                r = Poisson(P.oviposition_rate/365*P.development_probability*number_of_pairs)
+                miracidium_reservoir = rand(r)
+                
+                r = Poisson(P.shedding_rate/365*number_of_inf_snails)
+                cercaria_reservoir = rand(r)
+                cercaria_vec[t] = cercaria_reservoir
+                #snail dynamic
+                for i = 1:P.grid_size_snail
+                    if snails[i].health == SUSC
+                        lambda_s = 1-exp(-P.infection_snail/365)
+                        if rand() <= 1-(1-lambda_s)^miracidium_reservoir#(1-exp(-P.infection_snail/365*miracidium_reservoir))
+                            snails[i].health = LAT
+                            miracidium_reservoir -= 1
+                        end
+    
+                    elseif snails[i].health == LAT
+                        if rand() <= (1-exp(-P.mu_line_s/365))
+                            snails[i].health = SUSC
+                            snails[i].time_latent = 0
+                        elseif snails[i].time_latent >= P.latent_period
+                            snails[i].health = INF
+                        else 
+                            snails[i].time_latent += 1
+                        end
+                    elseif snails[i].health != DEAD 
+                        if rand() <= (1-exp(-P.mu_2line_s/365))
+                            snails[i].health = SUSC
+                            snails[i].time_latent = 0
+                        end
+                    end
+                end
+                #human dynamic
+                for i=1:P.grid_size_human ##since there is no contact structure, it doesn't matter the update sequence
+                    ##First, let's test if the human will die
+                    r = rand(1:P.grid_size_human)
+                    if (humans[r].age >= humans[r].death_age && humans[r].age_days >= humans[r].death_days)
+                        #if so, they are replaced by a newborn
+                        human_return(humans[r],P)
+                    else
+                        cercaria_reservoir = event_test(humans[r],P,cercaria_reservoir)  
+                    end
+                end
+    
+                infected_n[t],infected_found[t] = update_population(humans,P,t)
+    
+                t += 1
+                tt += 1
+            end
+    
+        end
+    end
+
 
 
     while t <= P.total_sim_time
@@ -191,7 +202,7 @@ function main(sim_index::Int64,P::SCHparameters)
             #=if snails[i].health == INF
                 number_of_inf_snails += 1
             end=#
-            y = Int(floor(Int(snails[i].health)/2))
+            y = Int(floor(abs(Int(snails[i].health))/2))
             number_of_inf_snails += y
         end
 
@@ -219,7 +230,7 @@ function main(sim_index::Int64,P::SCHparameters)
                 else 
                     snails[i].time_latent += 1
                 end
-            else 
+            elseif snails[i].health != DEAD 
                 if rand() <= (1-exp(-P.mu_2line_s/365))
                     snails[i].health = SUSC
                     snails[i].time_latent = 0

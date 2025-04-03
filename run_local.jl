@@ -16,7 +16,7 @@ addprocs(4)
 @everywhere include("parameters.jl")
 @everywhere include("schisto_abm.jl")
 #@everywhere include("main.jl")
-@everywhere const n_sim = 1000
+@everywhere const n_sim = 40
 
 include("prevalence.jl")
 
@@ -25,12 +25,12 @@ function file_names(P::SCHparameters)
 
     age_prevalence_data = "Age_r_$(P.file_index).dat"
 
-    folder0 = ""
-    
+    folder0 = "results/"
+    #folder0 = "."
     if !P.treatment
-        folder = string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)/")#"Cluster/fixed_seed/size_500_method_2/"#
+        folder = P.kill_snail ? string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)_ks$(P.prop_ks)/") : string(folder0,"result_$(P.grid_size_snail)_method_ks$(P.method)/")#"Cluster/fixed_seed/size_500_method_2/"#
     else
-        folder = string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)_$(P.rounds)_$(P.Interval)/")
+        folder = P.kill_snail ? string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)_$(P.rounds)_$(P.Interval)_ks$(P.prop_ks)/") : string(folder0,"result_$(P.grid_size_snail)_method_$(P.method)_$(P.rounds)_$(P.Interval)/")
     end
     
     time_data = "inf_time_series_r_$(P.file_index).dat"
@@ -92,7 +92,10 @@ function run_s(P,n_sim)
 end
 
 
-function run1(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0)
+#=---------------------------------------------=#
+
+
+function run1(idx, wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0; ks::Bool = false, pks::Float64 = 0.0)
     
     for inter = interv,roun = roundss
         P = SCHparameters(infection_human = 0.00493120,#6.688e-04,
@@ -109,14 +112,16 @@ function run1(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=
             treat_strat = strat,
             Interval = inter,
             treatment = treat,
-            eff_type = et
+            eff_type = et,
+            kill_snail = ks,
+            prop_ks = pks
         )
 
 
         age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data,time_data_found = file_names(P)
 
         #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-        n_sim = 1000
+        
         run_s(P,n_sim)
     end
 end
@@ -124,7 +129,7 @@ end
 
 
 
-function run2(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0)
+function run2(idx, wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0; ks::Bool = false, pks::Float64 = 0.0)
         
     for inter = interv,roun = roundss
         P = SCHparameters(infection_human = 2.6542e-03,#6.688e-04,
@@ -141,21 +146,23 @@ function run2(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=
         treat_strat = strat,
         Interval = inter,
         treatment = treat,
-        eff_type = et
+        eff_type = et,
+        kill_snail = ks,
+        prop_ks = pks
         )
 
 
         age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
 
         #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-        n_sim = 1000
+        
         run_s(P,n_sim)
     end
 
 end
 
 
-function run3(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0)
+function run3(idx, wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=0; ks::Bool = false, pks::Float64 = 0.0)
     for inter = interv,roun = roundss
 
         P = SCHparameters(infection_human = 4.96e-04,#6.688e-04,
@@ -172,19 +179,24 @@ function run3(idx,wld=1,treat=false,interv=[0],roundss=[0],strat=:dg,eff=0.0,et=
         treat_strat = strat,
         Interval = inter,
         treatment = treat,
-        eff_type = et
+        eff_type = et,
+        kill_snail = ks,
+        prop_ks = pks
         )
 
 
         age_prevalence_data,folder,time_data,age_data,inf_data,group_data,worms_data,cercaria_data,worms_c_data = file_names(P)
 
         #P = SCHparameters(beta = 0.01,file_index = 2,grid_size_human = 1000,infection_human = 0.000003,infection_snail = 0.0000001)
-        n_sim = 1000
+        
         run_s(P,n_sim)
     end
 end
 
-# testing
 
-run3(0)
 run1(0)
+run2(0)
+run3(0)
+
+kk = 0.5
+run1(8; ks = true, pks = kk)

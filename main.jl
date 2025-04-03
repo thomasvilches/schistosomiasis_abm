@@ -15,7 +15,7 @@ using Distributions
 function file_names(P::SCHparameters)
 
     age_prevalence_data = "Age_r_$(P.file_index).dat"
-    folder = "result_$(P.grid_size_snail)_method_$(P.method)/"#"Cluster/fixed_seed/size_500_method_2/"#
+    folder = P.kill_snail ? "result_$(P.grid_size_snail)_method_$(P.method)_$(P.prop_ks)/" : "result_$(P.grid_size_snail)_method_$(P.method)/"#"Cluster/fixed_seed/size_500_method_2/"#
     time_data = "inf_time_series_r_$(P.file_index).dat"
     age_data = "age_data_r_$(P.file_index).dat"
     inf_data = "inf_data_r_$(P.file_index).dat"

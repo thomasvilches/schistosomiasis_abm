@@ -1,4 +1,4 @@
-@enum HEALTH SUSC=0 INF=2 LAT=1
+@enum HEALTH SUSC=0 INF=2 LAT=1 DEAD=-1
 #@enum SNAIL_HEALTH SUSC=1 LAT=2 INF=3
 
 @with_kw mutable struct SCHparameters @deftype Int64
@@ -59,8 +59,10 @@
     ef_max::Float64 = 0.9
     ef_min::Float64 = 0.6
 
-    total_sim_time::Int64 = (years_sim+Int(ceil(rounds*Interval))+second_time)*365
+    total_sim_time::Int64 = 100*365#(years_sim+Int(ceil(rounds*Interval))+second_time)*365
 
+    kill_snail::Bool = ks
+    prop_ks::Float64 = pks
 end
 
 function limit_of_ages() 
