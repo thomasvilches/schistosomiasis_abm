@@ -103,9 +103,14 @@ function main(sim_index::Int64,P::SCHparameters)
     #initiating treatment
 
     if P.kill_snail
-        pos = sample(1:P.grid_size_snail, Int(floor(P.grid_size_snail*P.prop_ks)))
+        pos = sample(1:P.grid_size_snail, Int(round(P.grid_size_snail*P.prop_ks)); replace = false)
         for i in pos
             snails[i].health = DEAD
+        end
+
+        a = findall(x-> x == -1, Int.([snails[i].health for i in eachindex(snails)]))
+        if length(a) == 0
+            error("no dead snail")
         end
     end
 
@@ -126,6 +131,7 @@ function main(sim_index::Int64,P::SCHparameters)
                     number_of_pairs += min(humans[i].n_worms_f,humans[i].n_worms_m)
                 end
     
+                
                 for i=1:P.grid_size_snail
                     #=if snails[i].health == INF
                         number_of_inf_snails += 1
@@ -148,7 +154,7 @@ function main(sim_index::Int64,P::SCHparameters)
                             snails[i].health = LAT
                             miracidium_reservoir -= 1
                         end
-    
+        
                     elseif snails[i].health == LAT
                         if rand() <= (1-exp(-P.mu_line_s/365))
                             snails[i].health = SUSC
