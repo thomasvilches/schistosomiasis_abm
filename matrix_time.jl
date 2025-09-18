@@ -1,6 +1,6 @@
 
 using Distributed
-addprocs(4)
+addprocs(10)
 @everywhere using DelimitedFiles
 @everywhere using Parameters
 @everywhere using Statistics
@@ -334,6 +334,7 @@ end
 
 groups,prevalence = assimetric_prevalence()
 groups_label = ["0-1";"2-4";"5-9";"10-14";"15-19";"20-24";"25-29";"30-34";"35-39";"40-44";"45-49";"50-54";"55-59";"60-64";"65+"]
+
 
 writedlm("prevalence_field.dat",[groups prevalence])
 

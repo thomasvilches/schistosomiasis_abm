@@ -61,8 +61,8 @@
 
     total_sim_time::Int64 = 100*365#(years_sim+Int(ceil(rounds*Interval))+second_time)*365
 
-    kill_snail::Bool = ks
-    prop_ks::Float64 = pks
+    kill_snail::Bool = false
+    prop_ks::Float64 = 0.0
 end
 
 function limit_of_ages() 
